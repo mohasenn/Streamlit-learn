@@ -1,4 +1,9 @@
 import streamlit as st
+import pickle as pk
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
+
 
 st.set_page_config(page_title= "JAMBOREE", page_icon=":mortar_board:", layout="wide")
 st.title("JAMBOREE Admission Chance")
@@ -41,3 +46,16 @@ st.write(f"LOR Strength: {lor}")
 st.write(f"CGPA: {cgpa}")
 st.write(f"Research Experience: {r_exp}")
 """
+if st.button("Predict"):
+   input_data = np.array([[gre_score, toefl_score, u_rating, sop_rating, lor, cgpa, r_exp]])
+
+   with open('scale_jamboree.pkl', 'rb') as scale_file:
+       scaler = pk.load(scale_file)
+   scaled_input = scaler.transform(input_data)
+
+   with open('sk_model_jamboree.pkl', 'rb') as file:
+       sk_model = pk.load(file)
+
+
+   pred = sk_model.predict(scaled_input)
+   st.write("Your Admission chance is, ", pred*100, "%")
